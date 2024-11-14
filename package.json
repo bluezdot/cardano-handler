@@ -1,6 +1,12 @@
 {
   "dependencies": {
     "@blockfrost/blockfrost-js": "^5.6.0",
-    "@emurgo/cardano-serialization-lib-nodejs": "^13.1.0"
+    "@emurgo/cardano-serialization-lib-nodejs": "^13.1.0",
+    "@harmoniclabs/plu-ts": "^0.8.2",
+    "@meshsdk/core": "^1.7.14",
+    "cardano-wallet-js": "^1.4.0",
+    "lucid-cardano": "^0.10.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
   }
 }
