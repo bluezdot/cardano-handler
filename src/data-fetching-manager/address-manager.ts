@@ -1,5 +1,6 @@
 import { getBlockFrostApi, isCardanoTestnetAddress } from "../utils";
 
+// Balance
 export async function getAddressInfo (address: string) {
     try {
         const isTestnet = isCardanoTestnetAddress(address);
@@ -13,6 +14,7 @@ export async function getAddressInfo (address: string) {
 // noted:
 // Không check được balance của Address derived?
 
+// Balance và extra info
 export async function getAddressExtendedInfo (address: string){
     try {
         const isTestnet = isCardanoTestnetAddress(address);
@@ -23,6 +25,7 @@ export async function getAddressExtendedInfo (address: string){
     }
 }
 
+// Balance tổng nhận và gửi
 export async function getAddressDetailsInfo (address: string){
     try {
         const isTestnet = isCardanoTestnetAddress(address);
@@ -33,6 +36,7 @@ export async function getAddressDetailsInfo (address: string){
     }
 }
 
+// List Utxos
 export async function getAddressUtxos (address: string){
     try {
         const isTestnet = isCardanoTestnetAddress(address);
@@ -43,6 +47,7 @@ export async function getAddressUtxos (address: string){
     }
 }
 
+// List Utxos của asset
 export async function getAddressUtxosAsset (address: string, asset: string){
     try {
         const isTestnet = isCardanoTestnetAddress(address);
@@ -53,6 +58,7 @@ export async function getAddressUtxosAsset (address: string, asset: string){
     }
 }
 
+// List transactions
 export async function getAddressTxs (address: string){
     try {
         const isTestnet = isCardanoTestnetAddress(address);

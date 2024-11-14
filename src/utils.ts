@@ -8,7 +8,7 @@ export function isCardanoAddress (address: string): boolean {
     } catch (e) {
         return false;
     }
-};
+}
 
 export function isCardanoMainnetAddress (address: string): boolean {
     try {
@@ -19,7 +19,7 @@ export function isCardanoMainnetAddress (address: string): boolean {
     } catch (e) {
         return false;
     }
-};
+}
 
 export function isCardanoTestnetAddress (address: string): boolean {
     try {
@@ -30,7 +30,7 @@ export function isCardanoTestnetAddress (address: string): boolean {
     } catch (e) {
         return false;
     }
-};
+}
 
 export function getUrlByNetwork (isTestnet: boolean) {
 
