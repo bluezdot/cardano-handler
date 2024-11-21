@@ -4,6 +4,7 @@
     "@emurgo/cardano-serialization-lib-nodejs": "^13.1.0",
     "@harmoniclabs/plu-ts": "^0.8.2",
     "@meshsdk/core": "^1.7.14",
+    "@meshsdk/core-csl": "^1.7.19",
     "cardano-wallet-js": "^1.4.0",
     "lucid-cardano": "^0.10.10",
     "ts-node": "^10.9.2",
