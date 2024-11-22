@@ -60,7 +60,7 @@ async function main() {
         .selectUtxosFrom(utxos)
         .complete();
 
-    console.log('unsignedTx', unsignedTx);
+    // const signedMsg = paymentPrvKey.sign(Buffer.from(unsigned)); This method return WitnessesSetHash
 
     const cslUnsignedTx = CardanoWasm.FixedTransaction.from_hex(unsignedTx);
     cslUnsignedTx.sign_and_add_vkey_signature(CardanoWasm.PrivateKey.from_hex(paymentPrvKey.to_hex()))
@@ -79,7 +79,11 @@ async function main() {
     // console.log('[i] mesh', wallet.signTx(unsignedTx));
 
     const txHash = await blockchainProvider.submitTx(signedTx);
-    console.log('txHash', txHash);
 }
 
 main().catch((error) => {console.log('error', error)})
+
+// 3 công việc
+// - conflict webpack keyring
+// - chưa có token native assets để test
+// - setup server để xử lí phần build tx
