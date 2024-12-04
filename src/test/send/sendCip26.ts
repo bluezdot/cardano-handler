@@ -1,5 +1,4 @@
-import {BlockfrostProvider, MeshTxBuilder, MeshWallet, mnemonicToEntropy, UtxoSelection} from '@meshsdk/core';
-import {csl} from "@meshsdk/core-csl";
+import {BlockfrostProvider, MeshTxBuilder, mnemonicToEntropy, resolveSlotNo} from '@meshsdk/core';
 import * as CardanoWasm from "@emurgo/cardano-serialization-lib-nodejs";
 
 const SEND_TOKEN = 'lovelace'
@@ -8,8 +7,19 @@ const RECEIVER = 'addr_test1qzkjkwkyuvqh4hanewcych985euzqnd24jt2ej4kdyqpphr6hx9n
 const SENDER = 'addr_test1qr3nhq5hu88xjls8kyk790rcz2qt43aee9yuvx2gjn5msgfjwcw036s7adnz3f8ufl85guxkhz3cvv4znrvy7rzmv0qquff93j';
 const API_KEY = 'preprodcnP5RADcrWMlf2cQe4ZKm4cjRvrBQFXM';
 
+const SEND_TOKEN2 = '3d64987c567150b011edeed959cd1293432b7f2bc228982e2be395f70014df10426c7565646f742043617264616e6f'
+const SEND_AMOUNT2 = '4321000000000';
+
 function harden(num: number): number {
     return 0x80000000 + num;
+}
+
+// config time to live
+function getSlot(minutes: number) {
+    const nowDateTime = new Date();
+    const dateTimeAdd5Min = new Date(nowDateTime.getTime() + minutes*60000);
+
+    return resolveSlotNo('preprod', dateTimeAdd5Min.getTime())
 }
 
 async function main() {
@@ -52,14 +62,15 @@ async function main() {
     const unsignedTx = await txBuilder
         .txOut(RECEIVER, [
             {
-                unit: SEND_TOKEN,
-                quantity: SEND_AMOUNT
+                unit: SEND_TOKEN2,
+                quantity: SEND_AMOUNT2
             }
         ])
         .changeAddress(SENDER)
         .selectUtxosFrom(utxos)
+        .invalidHereafter(Number(getSlot(15)))
         .complete();
-
+    console.log('[i] unsignedTx', unsignedTx)
     // const signedMsg = paymentPrvKey.sign(Buffer.from(unsigned)); This method return WitnessesSetHash
 
     const cslUnsignedTx = CardanoWasm.FixedTransaction.from_hex(unsignedTx);
@@ -67,23 +78,9 @@ async function main() {
 
     const signedTx = cslUnsignedTx.to_hex();
     console.log('[i] csl', signedTx)
-    // const wallet = new MeshWallet({
-    //     networkId: 0,
-    //     fetcher: blockchainProvider,
-    //     submitter: blockchainProvider,
-    //     key: {
-    //         type: 'mnemonic',
-    //         words: 'north until topple blame bracket potato hawk repeat pyramid mutual question barely unfair fox office history famous marriage acid undo useful sail play trend'.split(' ')
-    //     },
-    // });
-    // console.log('[i] mesh', wallet.signTx(unsignedTx));
 
-    // const txHash = await blockchainProvider.submitTx(signedTx);
+    const txHash = await blockchainProvider.submitTx(signedTx);
+    console.log(txHash);
 }
 
 main().catch((error) => {console.log('error', error)})
-
-// 3 công việc
-// - conflict webpack keyring
-// - chưa có token native assets để test
-// - setup server để xử lí phần build tx
