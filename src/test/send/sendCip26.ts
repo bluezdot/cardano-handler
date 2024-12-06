@@ -8,18 +8,18 @@ const SENDER = 'addr_test1qr3nhq5hu88xjls8kyk790rcz2qt43aee9yuvx2gjn5msgfjwcw036
 const API_KEY = 'preprodcnP5RADcrWMlf2cQe4ZKm4cjRvrBQFXM';
 
 const SEND_TOKEN2 = '3d64987c567150b011edeed959cd1293432b7f2bc228982e2be395f70014df10426c7565646f742043617264616e6f'
-const SEND_AMOUNT2 = '4321000000000';
+const SEND_AMOUNT2 = '321000000000';
 
 function harden(num: number): number {
     return 0x80000000 + num;
 }
 
 // config time to live
-function getSlot(minutes: number) {
-    const nowDateTime = new Date();
-    const dateTimeAdd5Min = new Date(nowDateTime.getTime() + minutes*60000);
+function getSlot(hours: number, minutes = 0, seconds = 0) {
+    const nowTimestamp = new Date();
+    const targetTimestamp = new Date(nowTimestamp.getTime() + (seconds + minutes * 60 + hours * 60 * 60) * 1000);
 
-    return resolveSlotNo('preprod', dateTimeAdd5Min.getTime())
+    return resolveSlotNo('preprod', targetTimestamp.getTime())
 }
 
 async function main() {
@@ -68,7 +68,7 @@ async function main() {
         ])
         .changeAddress(SENDER)
         .selectUtxosFrom(utxos)
-        .invalidHereafter(Number(getSlot(15)))
+        .invalidHereafter(Number(getSlot(0, 3))) // 3 minutes
         .complete();
     console.log('[i] unsignedTx', unsignedTx)
     // const signedMsg = paymentPrvKey.sign(Buffer.from(unsigned)); This method return WitnessesSetHash
