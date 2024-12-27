@@ -53,12 +53,3 @@ async function main() {
 }
 
 main().catch((error) => {console.log('error', error)})
-
-// interface CardanoTxConfig {
-//     provider: string,
-//     isTestnet: boolean,
-//     policyId: string,
-//     amount: string,
-//     receiver: string,
-//     sender: string
-// }
