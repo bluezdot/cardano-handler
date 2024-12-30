@@ -1,5 +1,4 @@
-import {BlockfrostProvider, MeshTxBuilder, MeshWallet, mnemonicToEntropy, UtxoSelection} from '@meshsdk/core';
-import {csl} from "@meshsdk/core-csl";
+import {BlockfrostProvider, MeshTxBuilder, mnemonicToEntropy} from '@meshsdk/core';
 import * as CardanoWasm from "@emurgo/cardano-serialization-lib-nodejs";
 
 const SEND_TOKEN = 'lovelace'
@@ -82,8 +81,3 @@ async function main() {
 }
 
 main().catch((error) => {console.log('error', error)})
-
-// 3 công việc
-// - conflict webpack keyring
-// - chưa có token native assets để test
-// - setup server để xử lí phần build tx
