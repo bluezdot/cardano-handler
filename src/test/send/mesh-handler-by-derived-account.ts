@@ -2,9 +2,9 @@ import {BlockfrostProvider, MeshTxBuilder, mnemonicToEntropy} from '@meshsdk/cor
 import * as CardanoWasm from "@emurgo/cardano-serialization-lib-nodejs";
 
 const SEND_TOKEN = 'lovelace'
-const SEND_AMOUNT = '150000000';
-const RECEIVER = 'addr_test1qzkjkwkyuvqh4hanewcych985euzqnd24jt2ej4kdyqpphr6hx9nax27yydcv9djgekn4ylvq60f6c830ng77dp5af2qrphdqh';
-const SENDER = 'addr_test1qr3nhq5hu88xjls8kyk790rcz2qt43aee9yuvx2gjn5msgfjwcw036s7adnz3f8ufl85guxkhz3cvv4znrvy7rzmv0qquff93j';
+const SEND_AMOUNT = '1700000';
+const RECEIVER = 'addr_test1qpcv6j0wl3mlypw4udf2z74v4k8reklslx8020q0qzqc0wxmmnlwawkxjzctt94jmpcqysmt8xy35dm4hgyk3yua2uqsh49j95';
+const SENDER = 'addr_test1qz8rpssupfuyhrr2pp4uuaevs64n0tsfdh57y7ve6fwv2l04px9nwhersygs3dwmvdele4gh305q08pjs42p6j66s5hscxxrsz';
 const API_KEY = 'preprodcnP5RADcrWMlf2cQe4ZKm4cjRvrBQFXM';
 
 function harden(num: number): number {
@@ -22,6 +22,7 @@ async function main() {
     const accountKey = rootKey
         .derive(harden(1852))
         .derive(harden(1815))
+        .derive(harden(1))
         .derive(harden(0));
     const paymentPrvKey = accountKey
         .derive(0)
@@ -56,18 +57,15 @@ async function main() {
             }
         ])
         .changeAddress(SENDER)
-        .selectUtxosFrom(utxos)
+        .selectUtxosFrom(utxos, 'experimental', '1000000')
         .complete();
-    console.log('unsignedTx', unsignedTx);
 
-    // const signedMsg = paymentPrvKey.sign(Buffer.from(unsigned)); This method return WitnessesSetHash
+    const cslUnsignedTx = CardanoWasm.FixedTransaction.from_hex(unsignedTx);
+    cslUnsignedTx.sign_and_add_vkey_signature(CardanoWasm.PrivateKey.from_hex(paymentPrvKey.to_hex()))
 
-    const cslFixedTransaction = CardanoWasm.FixedTransaction.from_hex(unsignedTx);
-    cslFixedTransaction.sign_and_add_vkey_signature(CardanoWasm.PrivateKey.from_hex(paymentPrvKey.to_hex()))
-    const signedTx = cslFixedTransaction.to_hex();
-    console.log('signedTx', signedTx)
+    const signedTx = cslUnsignedTx.to_hex();
 
-    // const txHash = await blockchainProvider.submitTx(signedTx);
+    console.log('signedTx', signedTx);
 }
 
 main().catch((error) => {console.log('error', error)})
