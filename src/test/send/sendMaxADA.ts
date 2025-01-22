@@ -1,8 +1,6 @@
-import {BlockfrostProvider, MeshTxBuilder, mnemonicToEntropy, resolveSlotNo} from '@meshsdk/core';
+import {BlockfrostProvider, MeshTxBuilder, mnemonicToEntropy} from '@meshsdk/core';
 import * as CardanoWasm from "@emurgo/cardano-serialization-lib-nodejs";
 
-const SEND_TOKEN = '3d64987c567150b011edeed959cd1293432b7f2bc228982e2be395f70014df10426c7565646f742043617264616e6f'
-const SEND_AMOUNT = '321000000000';
 const RECEIVER = 'addr_test1qzkjkwkyuvqh4hanewcych985euzqnd24jt2ej4kdyqpphr6hx9nax27yydcv9djgekn4ylvq60f6c830ng77dp5af2qrphdqh';
 const SENDER = 'addr_test1qr3nhq5hu88xjls8kyk790rcz2qt43aee9yuvx2gjn5msgfjwcw036s7adnz3f8ufl85guxkhz3cvv4znrvy7rzmv0qquff93j';
 const API_KEY = 'preprodcnP5RADcrWMlf2cQe4ZKm4cjRvrBQFXM';
@@ -11,17 +9,9 @@ function harden(num: number): number {
     return 0x80000000 + num;
 }
 
-// config time to live
-function getSlot(hours: number, minutes = 0, seconds = 0) {
-    const nowTimestamp = new Date();
-    const targetTimestamp = new Date(nowTimestamp.getTime() + (seconds + minutes * 60 + hours * 60 * 60) * 1000);
-
-    return resolveSlotNo('preprod', targetTimestamp.getTime())
-}
-
 async function main() {
     // 1. Keyring
-    const mnemonic = 'north until topple blame bracket potato hawk repeat pyramid mutual question barely unfair fox office history famous marriage acid undo useful sail play trend';
+    const mnemonic = 'slogan ridge coffee quiz above front trial differ practice million nuclear grab sister believe deny battle loyal apart tourist sadness soul grief fever reflect';
     const entropy = mnemonicToEntropy(mnemonic);
     const rootKey = CardanoWasm.Bip32PrivateKey.from_bip39_entropy(
         Buffer.from(entropy, 'hex'),
@@ -52,32 +42,22 @@ async function main() {
     // 2. Build tx
     const blockchainProvider = new BlockfrostProvider(API_KEY);
     const utxos = await blockchainProvider.fetchAddressUTxOs(SENDER);
+
+    console.log('utxos', utxos);
     const txBuilder = new MeshTxBuilder({
         fetcher: blockchainProvider,
         evaluator: blockchainProvider
     });
     const unsignedTx = await txBuilder
-        .txOut(RECEIVER, [
-            {
-                unit: SEND_TOKEN,
-                quantity: SEND_AMOUNT
-            }
-        ])
-        .changeAddress(SENDER)
+        .changeAddress(RECEIVER)
         .selectUtxosFrom(utxos)
-        .invalidHereafter(Number(getSlot(0, 3))) // 3 minutes
         .complete();
-    console.log('[i] unsignedTx', unsignedTx)
-    // const signedMsg = paymentPrvKey.sign(Buffer.from(unsigned)); This method return WitnessesSetHash
+    console.log('unsignedTx', unsignedTx);
 
-    const cslUnsignedTx = CardanoWasm.FixedTransaction.from_hex(unsignedTx);
-    cslUnsignedTx.sign_and_add_vkey_signature(CardanoWasm.PrivateKey.from_hex(paymentPrvKey.to_hex()))
-
-    const signedTx = cslUnsignedTx.to_hex();
-    console.log('[i] csl', signedTx)
-
-    const txHash = await blockchainProvider.submitTx(signedTx);
-    console.log(txHash);
+    // const cslFixedTransaction = CardanoWasm.FixedTransaction.from_hex(unsignedTx);
+    // cslFixedTransaction.sign_and_add_vkey_signature(CardanoWasm.PrivateKey.from_hex(paymentPrvKey.to_hex()))
+    // const signedTx = cslFixedTransaction.to_hex();
+    // console.log('signedTx', signedTx)
 }
 
 main().catch((error) => {console.log('error', error)})
